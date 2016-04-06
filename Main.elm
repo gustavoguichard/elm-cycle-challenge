@@ -2,23 +2,22 @@ module Main (..) where
 
 import Effects
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Signal
+import Signal exposing (Address, forwardTo)
 import StartApp
 import Time exposing (every, second)
+import Components.Clock as Clock
 
 
 -- MODEL
 
 
 type alias Model =
-  { time : Int }
+  { clock : Clock.Model }
 
 
 model : Model
 model =
-  { time = 0 }
+  { clock = Clock.model }
 
 
 
@@ -27,18 +26,14 @@ model =
 
 type Action
   = NoOp
-  | Tick
-  | ResetClock
+  | ActionForClock Clock.Action
 
 
 update : Action -> Model -> ( Model, Effects.Effects a )
-update action model =
-  case action of
-    Tick ->
-      ( { model | time = model.time + 1 }, Effects.none )
-
-    ResetClock ->
-      ( { model | time = 0 }, Effects.none )
+update actionFor model =
+  case actionFor of
+    ActionForClock action ->
+      ( { model | clock = Clock.update action model.clock }, Effects.none )
 
     NoOp ->
       ( model, Effects.none )
@@ -48,13 +43,9 @@ update action model =
 -- VIEW
 
 
-view : Signal.Address Action -> Model -> Html
+view : Address Action -> Model -> Html
 view address model =
-  h1
-    [ style [ ( "background", "royalblue" ) ]
-    , onMouseEnter address ResetClock
-    ]
-    [ span [] [ text <| "seconds elapsed: " ++ toString model.time ] ]
+  Clock.view (forwardTo address ActionForClock) model.clock
 
 
 
@@ -67,7 +58,7 @@ app =
     { view = view
     , update = update
     , init = ( model, Effects.none )
-    , inputs = [ Signal.map (always Tick) (every second) ]
+    , inputs = [ Signal.map (always (ActionForClock Clock.Tick)) (every second) ]
     }
 
 
