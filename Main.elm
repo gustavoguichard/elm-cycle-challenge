@@ -1,13 +1,14 @@
 module Main (..) where
 
+import Components.Clock as Clock
+import Components.Counter as Counter
+import Components.Hello as Hello
 import Effects
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Signal exposing (Address, forwardTo)
 import StartApp
 import Time exposing (every, second)
-import Components.Clock as Clock
-import Components.Hello as Hello
 
 
 -- MODEL
@@ -16,6 +17,7 @@ import Components.Hello as Hello
 type alias Model =
   { clock : Clock.Model
   , hello : Hello.Model
+  , counter : Counter.Model
   }
 
 
@@ -23,6 +25,7 @@ model : Model
 model =
   { clock = Clock.model
   , hello = Hello.model
+  , counter = Counter.model
   }
 
 
@@ -34,6 +37,7 @@ type Action
   = NoOp
   | ActionForClock Clock.Action
   | ActionForHello Hello.Action
+  | ActionForCounter Counter.Action
 
 
 update : Action -> Model -> ( Model, Effects.Effects a )
@@ -44,6 +48,9 @@ update actionFor model =
 
     ActionForHello action ->
       ( { model | hello = Hello.update action model.hello }, Effects.none )
+
+    ActionForCounter action ->
+      ( { model | counter = Counter.update action model.counter }, Effects.none )
 
     NoOp ->
       ( model, Effects.none )
@@ -65,6 +72,8 @@ view address model =
     [ Clock.view (forwardTo address ActionForClock) model.clock
     , divisor
     , Hello.view (forwardTo address ActionForHello) model.hello
+    , divisor
+    , Counter.view (forwardTo address ActionForCounter) model.counter
     ]
 
 
