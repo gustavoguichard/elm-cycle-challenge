@@ -3,6 +3,7 @@ module Main (..) where
 import Components.Clock as Clock
 import Components.Counter as Counter
 import Components.Hello as Hello
+import Components.LabeledSlider as Slider
 import Components.User as User
 import Effects
 import Html exposing (..)
@@ -21,6 +22,7 @@ type alias Model =
   , hello : Hello.Model
   , counter : Counter.Model
   , user : User.Model
+  , slider : Slider.Model
   }
 
 
@@ -30,6 +32,7 @@ model =
   , hello = Hello.model
   , counter = Counter.model
   , user = User.model
+  , slider = Slider.modelWithProps { unit = "cm", label = "Height", min = 140, max = 220, init = 170 }
   }
 
 
@@ -42,6 +45,7 @@ type Action
   | ActionForClock Clock.Action
   | ActionForCounter Counter.Action
   | ActionForHello Hello.Action
+  | ActionForSlider Slider.Action
   | ActionForUser User.Action
 
 
@@ -56,6 +60,9 @@ update actionFor model =
 
     ActionForHello action ->
       ( { model | hello = Hello.update action model.hello }, Effects.none )
+
+    ActionForSlider action ->
+      ( { model | slider = Slider.update action model.slider }, Effects.none )
 
     ActionForUser action ->
       let
@@ -88,6 +95,8 @@ view address model =
     , Counter.view (forwardTo address ActionForCounter) model.counter
     , divisor
     , User.view (forwardTo address ActionForUser) model.user
+    , divisor
+    , Slider.view (forwardTo address ActionForSlider) model.slider
     ]
 
 
