@@ -10,12 +10,12 @@ import Signal exposing (Address)
 
 
 type alias Model =
-  { time : Int }
+  Int
 
 
 model : Model
 model =
-  { time = 0 }
+  0
 
 
 
@@ -31,10 +31,10 @@ update : Action -> Model -> Model
 update action model =
   case action of
     Tick ->
-      { model | time = model.time + 1 }
+      model + 1
 
     ResetClock ->
-      { model | time = 0 }
+      0
 
 
 
@@ -47,4 +47,4 @@ view address model =
     [ style [ ( "background", "royalblue" ) ]
     , onMouseEnter address ResetClock
     ]
-    [ span [] [ text <| "seconds elapsed: " ++ toString model.time ] ]
+    [ span [] [ text <| "seconds elapsed: " ++ toString model ] ]
