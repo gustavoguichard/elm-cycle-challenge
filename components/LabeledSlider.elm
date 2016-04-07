@@ -9,38 +9,18 @@ import Signal exposing (Address)
 -- MODEL
 
 
-type alias Props =
+type alias Model =
   { label : String
   , unit : String
   , min : Int
   , max : Int
-  , init : Int
-  }
-
-
-type alias Model =
-  { value : Int
-  , props : Props
-  }
-
-
-defaultProps : Props
-defaultProps =
-  Props "" "cm" 0 0 0
-
-
-modelWithProps : Props -> Model
-modelWithProps props =
-  { value = props.init
-  , props = props
+  , value : Int
   }
 
 
 model : Model
 model =
-  { value = 0
-  , props = defaultProps
-  }
+  Model "" "cm" 0 0 0
 
 
 
@@ -68,13 +48,13 @@ view address model =
     [ class "labeled-slider"
     , style [ ( "text-align", "center" ) ]
     ]
-    [ label [] [ text (model.props.label ++ " " ++ (toString model.value) ++ model.props.unit) ]
+    [ label [] [ text (model.label ++ " " ++ (toString model.value) ++ model.unit) ]
     , br [] []
     , input
         [ type' "range"
         , class "slider"
-        , Attr.max <| toString model.props.max
-        , Attr.min <| toString model.props.min
+        , Attr.max <| toString model.max
+        , Attr.min <| toString model.min
         , value <| toString model.value
         , onIntChange address UpdateValue
         ]

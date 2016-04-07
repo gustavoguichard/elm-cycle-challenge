@@ -1,9 +1,9 @@
 module Main (..) where
 
+import Components.BMI as BMI
 import Components.Clock as Clock
 import Components.Counter as Counter
 import Components.Hello as Hello
-import Components.LabeledSlider as Slider
 import Components.User as User
 import Effects
 import Html exposing (..)
@@ -22,7 +22,7 @@ type alias Model =
   , hello : Hello.Model
   , counter : Counter.Model
   , user : User.Model
-  , slider : Slider.Model
+  , bmi : BMI.Model
   }
 
 
@@ -32,7 +32,7 @@ model =
   , hello = Hello.model
   , counter = Counter.model
   , user = User.model
-  , slider = Slider.modelWithProps { unit = "cm", label = "Height", min = 140, max = 220, init = 170 }
+  , bmi = BMI.model
   }
 
 
@@ -42,16 +42,19 @@ model =
 
 type Action
   = NoOp
+  | ActionForBMI BMI.Action
   | ActionForClock Clock.Action
   | ActionForCounter Counter.Action
   | ActionForHello Hello.Action
-  | ActionForSlider Slider.Action
   | ActionForUser User.Action
 
 
 update : Action -> Model -> ( Model, Effects.Effects Action )
 update actionFor model =
   case actionFor of
+    ActionForBMI action ->
+      ( { model | bmi = BMI.update action model.bmi }, Effects.none )
+
     ActionForClock action ->
       ( { model | clock = Clock.update action model.clock }, Effects.none )
 
@@ -60,9 +63,6 @@ update actionFor model =
 
     ActionForHello action ->
       ( { model | hello = Hello.update action model.hello }, Effects.none )
-
-    ActionForSlider action ->
-      ( { model | slider = Slider.update action model.slider }, Effects.none )
 
     ActionForUser action ->
       let
@@ -88,15 +88,15 @@ view : Address Action -> Model -> Html
 view address model =
   main'
     [ class "main-content" ]
-    [ Clock.view (forwardTo address ActionForClock) model.clock
+    [ BMI.view (forwardTo address ActionForBMI) model.bmi
+    , divisor
+    , Clock.view (forwardTo address ActionForClock) model.clock
     , divisor
     , Hello.view (forwardTo address ActionForHello) model.hello
     , divisor
     , Counter.view (forwardTo address ActionForCounter) model.counter
     , divisor
     , User.view (forwardTo address ActionForUser) model.user
-    , divisor
-    , Slider.view (forwardTo address ActionForSlider) model.slider
     ]
 
 
