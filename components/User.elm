@@ -1,13 +1,12 @@
 module Components.User (..) where
 
 import Effects exposing (Effects)
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (div, h1, h4, a, button, span, text, Html)
+import Html.Attributes exposing (href)
+import Html.Events exposing (onClick)
 import Http
-import Json.Decode exposing (..)
-import Json.Decode.Pipeline as Pipeline
-import Json.Encode
+import Json.Decode exposing (Decoder, string)
+import Json.Decode.Pipeline as Pipeline exposing (decode)
 import Signal exposing (Address)
 import Task exposing (Task)
 
@@ -22,7 +21,7 @@ apiUrl =
 
 userDecoder : Decoder User
 userDecoder =
-  Pipeline.decode User
+  decode User
     |> Pipeline.required "name" string
     |> Pipeline.required "email" string
     |> Pipeline.required "website" string

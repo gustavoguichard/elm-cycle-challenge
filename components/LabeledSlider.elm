@@ -1,7 +1,7 @@
 module Components.LabeledSlider (..) where
 
 import Helpers.Utils exposing (onIntChange)
-import Html exposing (..)
+import Html exposing (div, label, input, text, Html)
 import Html.Attributes as Attr
 import Signal exposing (Address)
 
@@ -49,7 +49,6 @@ view address model =
     [ label [] [ text (model.label ++ " " ++ (toString model.value) ++ model.unit) ]
     , input
         [ Attr.type' "range"
-        , Attr.class "slider"
         , Attr.max <| toString model.max
         , Attr.min <| toString model.min
         , Attr.value <| toString model.value

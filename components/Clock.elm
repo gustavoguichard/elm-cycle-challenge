@@ -1,8 +1,7 @@
 module Components.Clock (..) where
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (h1, span, text, Html)
+import Html.Events exposing (onMouseEnter)
 import Signal exposing (Address)
 
 

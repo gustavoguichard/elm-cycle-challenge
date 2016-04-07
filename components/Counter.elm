@@ -1,6 +1,6 @@
 module Components.Counter (..) where
 
-import Html exposing (..)
+import Html exposing (div, button, p, label, text, Html)
 import Html.Attributes exposing (style)
 import Html.Events exposing (..)
 import Signal exposing (Address)

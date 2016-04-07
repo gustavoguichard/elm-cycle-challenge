@@ -13,18 +13,14 @@ onInput address action =
 
 onIntChange : Signal.Address a -> (Int -> a) -> Attribute
 onIntChange address action =
-  on "input" targetValue (Signal.message address << action << convertToInt)
+  on "input" targetValue (Signal.message address << action << stToInt)
 
 
-convertToInt : String -> Int
-convertToInt string =
-  let
-    int' =
-      String.toInt string
-  in
-    case int' of
-      Ok n ->
-        n
+stToInt : String -> Int
+stToInt string =
+  case String.toInt string of
+    Ok n ->
+      n
 
-      _ ->
-        0
+    _ ->
+      0

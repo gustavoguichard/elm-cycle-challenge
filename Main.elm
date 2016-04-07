@@ -6,8 +6,7 @@ import Components.Counter as Counter
 import Components.Hello as Hello
 import Components.User as User
 import Effects
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (main', hr, Html)
 import Signal exposing (Address, forwardTo)
 import StartApp
 import Task exposing (Task)
@@ -82,7 +81,7 @@ update actionFor model =
 view : Address Action -> Model -> Html
 view address model =
   main'
-    [ class "main-content" ]
+    []
     [ BMI.view (forwardTo address ActionForBMI) model.bmi
     , hr [] []
     , Hello.view (forwardTo address ActionForHello) model.hello

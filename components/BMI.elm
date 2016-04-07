@@ -1,7 +1,7 @@
 module Components.BMI (..) where
 
 import Components.LabeledSlider as Slider
-import Html exposing (..)
+import Html exposing (div, h2, text, Html)
 import Signal exposing (Address)
 import String
 

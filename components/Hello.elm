@@ -1,8 +1,8 @@
 module Components.Hello (..) where
 
 import Helpers.Utils exposing (onInput)
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html exposing (div, label, input, text, hr, h1, Html)
+import Html.Attributes exposing (type')
 import Signal exposing (Address)
 
 
