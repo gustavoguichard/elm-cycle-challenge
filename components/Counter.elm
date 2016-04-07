@@ -44,7 +44,7 @@ update action model =
 view : Address Action -> Model -> Html
 view address model =
   div
-    [ style [ ( "text-align", "center" ) ] ]
+    []
     [ button [ onClick address Increment ] [ text "Increment" ]
     , button [ onClick address Decrement ] [ text "Decrement" ]
     , p [] [ label [] [ text <| toString model ] ]

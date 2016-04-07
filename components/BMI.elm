@@ -58,7 +58,7 @@ view : Address Action -> Model -> Html
 view address model =
   div
     []
-    [ h2 [] [ text <| (++) "BMI is " <| toString <| toBmi model ]
+    [ Slider.view (Signal.forwardTo address UpdateWeight) model.weight
     , Slider.view (Signal.forwardTo address UpdateHeight) model.height
-    , Slider.view (Signal.forwardTo address UpdateWeight) model.weight
+    , h2 [] [ text <| (++) "BMI is " <| toString <| toBmi model ]
     ]

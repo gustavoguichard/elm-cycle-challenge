@@ -2,7 +2,7 @@ module Components.LabeledSlider (..) where
 
 import Helpers.Utils exposing (onIntChange)
 import Html exposing (..)
-import Html.Attributes as Attr exposing (..)
+import Html.Attributes as Attr
 import Signal exposing (Address)
 
 
@@ -45,17 +45,14 @@ update action model =
 view : Address Action -> Model -> Html
 view address model =
   div
-    [ class "labeled-slider"
-    , style [ ( "text-align", "center" ) ]
-    ]
+    []
     [ label [] [ text (model.label ++ " " ++ (toString model.value) ++ model.unit) ]
-    , br [] []
     , input
-        [ type' "range"
-        , class "slider"
+        [ Attr.type' "range"
+        , Attr.class "slider"
         , Attr.max <| toString model.max
         , Attr.min <| toString model.min
-        , value <| toString model.value
+        , Attr.value <| toString model.value
         , onIntChange address UpdateValue
         ]
         []

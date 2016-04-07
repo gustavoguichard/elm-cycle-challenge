@@ -44,7 +44,8 @@ update action model =
 view : Address Action -> Model -> Html
 view address model =
   h1
-    [ style [ ( "background", "royalblue" ) ]
-    , onMouseEnter address ResetClock
+    []
+    [ span
+        [ onMouseEnter address ResetClock ]
+        [ text <| "seconds elapsed: " ++ toString model ]
     ]
-    [ span [] [ text <| "seconds elapsed: " ++ toString model ] ]

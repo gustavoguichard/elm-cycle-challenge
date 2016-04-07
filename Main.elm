@@ -79,23 +79,18 @@ update actionFor model =
 -- VIEW
 
 
-divisor : Html
-divisor =
-  hr [ style [ ( "padding", "20px 0" ) ] ] []
-
-
 view : Address Action -> Model -> Html
 view address model =
   main'
     [ class "main-content" ]
     [ BMI.view (forwardTo address ActionForBMI) model.bmi
-    , divisor
-    , Clock.view (forwardTo address ActionForClock) model.clock
-    , divisor
+    , hr [] []
     , Hello.view (forwardTo address ActionForHello) model.hello
-    , divisor
+    , hr [] []
     , Counter.view (forwardTo address ActionForCounter) model.counter
-    , divisor
+    , hr [] []
+    , Clock.view (forwardTo address ActionForClock) model.clock
+    , hr [] []
     , User.view (forwardTo address ActionForUser) model.user
     ]
 
