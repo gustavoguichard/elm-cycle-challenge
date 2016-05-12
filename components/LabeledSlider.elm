@@ -1,9 +1,8 @@
-module Components.LabeledSlider (..) where
+module Components.LabeledSlider exposing (..)
 
 import Helpers.Utils exposing (onIntChange)
 import Html exposing (div, label, input, text, Html)
 import Html.Attributes as Attr
-import Signal exposing (Address)
 
 
 -- MODEL
@@ -27,13 +26,13 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = UpdateValue Int
 
 
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
     UpdateValue value ->
       { model | value = value }
 
@@ -42,8 +41,8 @@ update action model =
 -- VIEW
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   div
     []
     [ label [] [ text (model.label ++ " " ++ (toString model.value) ++ model.unit) ]
@@ -52,7 +51,7 @@ view address model =
         , Attr.max <| toString model.max
         , Attr.min <| toString model.min
         , Attr.value <| toString model.value
-        , onIntChange address UpdateValue
+        , onIntChange UpdateValue
         ]
         []
     ]

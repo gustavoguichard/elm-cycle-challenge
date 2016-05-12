@@ -1,8 +1,8 @@
-module Components.BMI (..) where
+module Components.BMI exposing (..)
 
 import Components.LabeledSlider as Slider
 import Html exposing (div, h2, text, Html)
-import Signal exposing (Address)
+import Html.App exposing (map)
 import String
 
 
@@ -26,19 +26,19 @@ model =
 -- UPDATE
 
 
-type Action
-  = UpdateHeight Slider.Action
-  | UpdateWeight Slider.Action
+type Msg
+  = UpdateHeight Slider.Msg
+  | UpdateWeight Slider.Msg
 
 
-update : Action -> Model -> Model
-update actionFor model =
-  case actionFor of
-    UpdateHeight action ->
-      { model | height = Slider.update action model.height }
+update : Msg -> Model -> Model
+update msgFor model =
+  case msgFor of
+    UpdateHeight msg ->
+      { model | height = Slider.update msg model.height }
 
-    UpdateWeight action ->
-      { model | weight = Slider.update action model.weight }
+    UpdateWeight msg ->
+      { model | weight = Slider.update msg model.weight }
 
 
 
@@ -54,11 +54,11 @@ toBmi model =
     round <| toFloat model.weight.value / heightMeters
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   div
     []
-    [ Slider.view (Signal.forwardTo address UpdateWeight) model.weight
-    , Slider.view (Signal.forwardTo address UpdateHeight) model.height
+    [ map UpdateWeight (Slider.view model.weight)
+    , map UpdateHeight (Slider.view model.height)
     , h2 [] [ text <| (++) "BMI is " <| toString <| toBmi model ]
     ]

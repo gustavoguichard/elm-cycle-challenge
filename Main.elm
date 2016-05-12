@@ -1,16 +1,14 @@
-module Main (..) where
+module Main exposing (..)
 
 import Components.BMI as BMI
 import Components.Clock as Clock
 import Components.Counter as Counter
 import Components.Hello as Hello
 import Components.User as User
-import Effects
 import Html exposing (main', hr, Html)
-import Signal exposing (Address, forwardTo)
-import StartApp
+import Html.App as App
 import Task exposing (Task)
-import Time exposing (every, second)
+import Time exposing (second)
 
 
 -- MODEL
@@ -39,80 +37,76 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = NoOp
-  | ActionForBMI BMI.Action
-  | ActionForClock Clock.Action
-  | ActionForCounter Counter.Action
-  | ActionForHello Hello.Action
-  | ActionForUser User.Action
+  | MsgForBMI BMI.Msg
+  | MsgForClock Clock.Msg
+  | MsgForCounter Counter.Msg
+  | MsgForHello Hello.Msg
+  | MsgForUser User.Msg
 
 
-update : Action -> Model -> ( Model, Effects.Effects Action )
-update actionFor model =
-  case actionFor of
-    ActionForBMI action ->
-      ( { model | bmi = BMI.update action model.bmi }, Effects.none )
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msgFor model =
+  case msgFor of
+    MsgForBMI msg ->
+      { model | bmi = BMI.update msg model.bmi } ! []
 
-    ActionForClock action ->
-      ( { model | clock = Clock.update action model.clock }, Effects.none )
+    MsgForClock msg ->
+      { model | clock = Clock.update msg model.clock } ! []
 
-    ActionForCounter action ->
-      ( { model | counter = Counter.update action model.counter }, Effects.none )
+    MsgForCounter msg ->
+      { model | counter = Counter.update msg model.counter } ! []
 
-    ActionForHello action ->
-      ( { model | hello = Hello.update action model.hello }, Effects.none )
+    MsgForHello msg ->
+      { model | hello = Hello.update msg model.hello } ! []
 
-    ActionForUser action ->
+    MsgForUser msg ->
       let
         ( user, fx ) =
-          User.update action model.user
+          User.update msg model.user
       in
-        ( { model | user = user }, Effects.map ActionForUser fx )
+        { model | user = user } ! [ Cmd.map MsgForUser fx ]
 
     NoOp ->
-      ( model, Effects.none )
+      model ! []
 
 
 
 -- VIEW
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   main'
     []
-    [ BMI.view (forwardTo address ActionForBMI) model.bmi
+    [ App.map MsgForBMI (BMI.view model.bmi)
     , hr [] []
-    , Hello.view (forwardTo address ActionForHello) model.hello
+    , App.map MsgForHello (Hello.view model.hello)
     , hr [] []
-    , Counter.view (forwardTo address ActionForCounter) model.counter
+    , App.map MsgForCounter (Counter.view model.counter)
     , hr [] []
-    , Clock.view (forwardTo address ActionForClock) model.clock
+    , App.map MsgForClock (Clock.view model.clock)
     , hr [] []
-    , User.view (forwardTo address ActionForUser) model.user
+    , App.map MsgForUser (User.view model.user)
     ]
+
+
+-- Subscriptions
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  Time.every second (MsgForClock Clock.Tick |> always)
 
 
 
 -- APP
 
 
-app : StartApp.App Model
-app =
-  StartApp.start
+main : Program Never
+main =
+  App.program
     { view = view
     , update = update
-    , init = ( model, Effects.none )
-    , inputs = [ Signal.map (always (ActionForClock Clock.Tick)) (every second) ]
+    , init = ( model, Cmd.none )
+    , subscriptions = subscriptions
     }
-
-
-main : Signal Html
-main =
-  app.html
-
-
-port tasks : Signal (Task Effects.Never ())
-port tasks =
-  app.tasks

@@ -1,9 +1,8 @@
-module Components.Counter (..) where
+module Components.Counter exposing (..)
 
 import Html exposing (div, button, p, label, text, Html)
 import Html.Attributes exposing (style)
 import Html.Events exposing (..)
-import Signal exposing (Address)
 
 
 -- MODEL
@@ -22,14 +21,14 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = Increment
   | Decrement
 
 
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
     Increment ->
       model + 1
 
@@ -41,11 +40,11 @@ update action model =
 -- VIEW
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   div
     []
-    [ button [ onClick address Increment ] [ text "Increment" ]
-    , button [ onClick address Decrement ] [ text "Decrement" ]
+    [ button [ onClick Increment ] [ text "Increment" ]
+    , button [ onClick Decrement ] [ text "Decrement" ]
     , p [] [ label [] [ text <| toString model ] ]
     ]

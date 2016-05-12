@@ -1,10 +1,8 @@
-module Components.Hello (..) where
+module Components.Hello exposing (..)
 
-import Helpers.Utils exposing (onInput)
 import Html exposing (div, label, input, text, hr, h1, Html)
 import Html.Attributes exposing (type')
-import Signal exposing (Address)
-
+import Html.Events exposing (onInput)
 
 -- MODEL
 
@@ -22,13 +20,13 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = UpdateField String
 
 
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
     UpdateField string ->
       string
 
@@ -37,14 +35,14 @@ update action model =
 -- VIEW
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   div
     []
     [ label [] [ text "Name:" ]
     , input
         [ type' "text"
-        , onInput address UpdateField
+        , onInput UpdateField
         ]
         []
     , hr [] []

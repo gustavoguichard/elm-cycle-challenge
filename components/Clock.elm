@@ -1,8 +1,7 @@
-module Components.Clock (..) where
+module Components.Clock exposing (..)
 
 import Html exposing (h1, span, text, Html)
 import Html.Events exposing (onMouseEnter)
-import Signal exposing (Address)
 
 
 -- MODEL
@@ -21,14 +20,14 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = Tick
   | ResetClock
 
 
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
     Tick ->
       model + 1
 
@@ -40,11 +39,11 @@ update action model =
 -- VIEW
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   h1
     []
     [ span
-        [ onMouseEnter address ResetClock ]
+        [ onMouseEnter ResetClock ]
         [ text <| "seconds elapsed: " ++ toString model ]
     ]

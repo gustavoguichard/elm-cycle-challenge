@@ -1,13 +1,10 @@
-module Components.User (..) where
+module Components.User exposing (..)
 
-import Effects exposing (Effects)
 import Html exposing (div, h1, h4, a, button, span, text, Html)
 import Html.Attributes exposing (href)
 import Html.Events exposing (onClick)
 import Http
-import Json.Decode exposing (Decoder, string)
-import Json.Decode.Pipeline as Pipeline exposing (decode)
-import Signal exposing (Address)
+import Json.Decode exposing (Decoder, object3, string, (:=))
 import Task exposing (Task)
 
 
@@ -21,24 +18,18 @@ apiUrl =
 
 userDecoder : Decoder User
 userDecoder =
-  decode User
-    |> Pipeline.required "name" string
-    |> Pipeline.required "email" string
-    |> Pipeline.required "website" string
-
+  object3 User
+    ("name" := string)
+    ("email" := string)
+    ("website" := string)
 
 
 --EFFECTS
 
 
-searchUser : String -> Effects Action
+searchUser : String -> Cmd Msg
 searchUser url =
-  Effects.task <| performQuery (Http.get userDecoder url)
-
-
-performQuery : Task Http.Error User -> Task a Action
-performQuery task =
-  Task.onError (Task.map SuccessfulRequest task) (Task.succeed << RequestError)
+  Task.perform RequestError SuccessfulRequest (Http.get userDecoder url)
 
 
 
@@ -67,34 +58,34 @@ model =
 -- UPDATE
 
 
-type Action
+type Msg
   = RequestUser
   | RequestError Http.Error
   | SuccessfulRequest User
 
 
-update : Action -> Model -> ( Model, Effects.Effects Action )
-update action model =
-  case action of
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  case msg of
     RequestUser ->
-      ( { model | loading = True }, searchUser apiUrl )
+      { model | loading = True } ! [ searchUser apiUrl ]
 
     RequestError error ->
       let
         foo =
           Debug.log "Erro: " error
       in
-        ( { model | loading = False }, Effects.none )
+        { model | loading = False } ! []
 
     SuccessfulRequest user ->
-      ( { model | user = Just user, loading = False }, Effects.none )
+      { model | user = Just user, loading = False } ! []
 
 
 
 -- VIEW
 
 
-userView : User -> Html
+userView : User -> Html Msg
 userView user =
   div
     []
@@ -104,8 +95,8 @@ userView user =
     ]
 
 
-view : Address Action -> Model -> Html
-view address model =
+view : Model -> Html Msg
+view model =
   let
     userHtml =
       case model.user of
@@ -123,7 +114,7 @@ view address model =
   in
     div
       []
-      [ button [ onClick address RequestUser ] [ text "Get first user" ]
+      [ button [ onClick RequestUser ] [ text "Get first user" ]
       , userHtml
       , text loading
       ]
